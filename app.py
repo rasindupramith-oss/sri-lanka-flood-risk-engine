@@ -13,7 +13,7 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-# 2. Comprehensive High-Contrast Dark Theme CSS
+# 2. Complete High-Contrast Custom CSS
 st.markdown(
     """
     <style>
@@ -23,44 +23,40 @@ st.markdown(
         color: #f0f6fc !important;
     }
 
-    /* FORCED CRISP TEXT ON ALL WIDGET LABELS (Dropdowns, Sliders, Inputs) */
+    /* FORCED CRISP TEXT ON ALL WIDGET LABELS */
     label[data-testid="stWidgetLabel"] p, 
     label[data-testid="stWidgetLabel"] span,
     .stSelectbox label p,
     .stSlider label p,
-    .stDateInput label p {
+    .stDateInput label p,
+    .stRadio label p {
         color: #f0f6fc !important;
-        font-size: 15px !important;
+        font-size: 14px !important;
         font-weight: 600 !important;
-        letter-spacing: 0.3px !important;
     }
 
-    /* SIDEBAR TEXT & BULLET POINTS FIX */
+    /* SIDEBAR STYLING */
     section[data-testid="stSidebar"] {
         background-color: #161b22 !important;
         border-right: 1px solid #30363d !important;
     }
     section[data-testid="stSidebar"] p,
     section[data-testid="stSidebar"] span,
-    section[data-testid="stSidebar"] li,
-    section[data-testid="stSidebar"] h1,
-    section[data-testid="stSidebar"] h2,
-    section[data-testid="stSidebar"] h3,
-    section[data-testid="stSidebar"] h4 {
-        color: #e6edf3 !important;
+    section[data-testid="stSidebar"] li {
+        color: #c9d1d9 !important;
     }
     section[data-testid="stSidebar"] li {
-        margin-bottom: 6px !important;
-        font-size: 14px !important;
+        margin-bottom: 5px !important;
+        font-size: 13px !important;
     }
 
-    /* NAVIGATION RADIO BUTTONS: HIGH CONTRAST & CARD LOOK */
+    /* NAVIGATION BUTTONS (RADIO) */
     div[data-testid="stRadio"] div[role="radiogroup"] label {
         background-color: #21262d !important;
         border: 1px solid #30363d !important;
         border-radius: 8px !important;
-        padding: 8px 14px !important;
-        margin-bottom: 8px !important;
+        padding: 8px 12px !important;
+        margin-bottom: 7px !important;
         transition: all 0.2s ease !important;
     }
     div[data-testid="stRadio"] div[role="radiogroup"] label:hover {
@@ -69,11 +65,33 @@ st.markdown(
     }
     div[data-testid="stRadio"] div[role="radiogroup"] label p {
         color: #ffffff !important;
-        font-size: 14px !important;
         font-weight: 600 !important;
     }
 
-    /* KPI CARDS ENHANCED CONTRAST */
+    /* FIX FOR PROFILE LINK BUTTONS (LINKEDIN & GITHUB) */
+    .stLinkButton a, div[data-testid="stLinkButton"] a {
+        background-color: #21262d !important;
+        color: #ffffff !important;
+        border: 1px solid #384252 !important;
+        border-radius: 8px !important;
+        font-weight: 600 !important;
+        font-size: 13px !important;
+        padding: 8px 12px !important;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3) !important;
+        transition: all 0.2s ease !important;
+    }
+    .stLinkButton a:hover, div[data-testid="stLinkButton"] a:hover {
+        background-color: #30363d !important;
+        border-color: #58a6ff !important;
+        color: #58a6ff !important;
+        transform: translateY(-1px);
+    }
+    .stLinkButton a p, div[data-testid="stLinkButton"] a p {
+        color: #ffffff !important;
+        font-weight: 600 !important;
+    }
+
+    /* HIGH-CONTRAST KPI CARDS */
     .kpi-card {
         background: linear-gradient(135deg, #1c2128 0%, #252c37 100%);
         border: 1px solid #384252;
@@ -109,13 +127,13 @@ st.markdown(
     .kpi-good  { color: #4cd964 !important; }
     .kpi-info  { color: #58a6ff !important; }
 
-    /* AUTHOR BADGE IN SIDEBAR */
+    /* AUTHOR BADGE */
     .sidebar-author {
         background: #0d1117;
         border: 1px solid #30363d;
         border-radius: 10px;
         padding: 14px;
-        margin-bottom: 20px;
+        margin-bottom: 18px;
     }
     .sys-badge {
         display: inline-block;
@@ -223,7 +241,7 @@ with st.sidebar:
         * **Monitored Nodes:** `25 Districts`
         * **Temporal Depth:** `10 Years (2015–2024)`
         * **Total Records:** `91,325 Days`
-        * **Physical Benchmark:** `Cyclone Roanu Disaster`
+        * **Physical Benchmark:** `Cyclone Roanu (May 2016)`
     """)
 
   st.markdown("<hr style='border-color:#30363d;'>", unsafe_allow_html=True)
@@ -284,7 +302,7 @@ if mode == "🗺️ National Risk Map (Historical)":
           )
       )
 
-  day_df = df[df["date"] == selected_date]
+  day_df = df[df["date"] == selected_date].copy()
   critical_count = len(
       day_df[day_df["flood_category"].str.contains("Critical")]
   )
@@ -315,7 +333,7 @@ if mode == "🗺️ National Risk Map (Historical)":
     st.markdown(
         f"""
             <div class="kpi-card">
-                <div class="kpi-label">Critical Overflow Alerts</div>
+                <div class="kpi-label">Critical Alerts</div>
                 <div class="kpi-value">{critical_count} <span style="font-size:16px; color:#8b949e;">/ 25</span></div>
                 <div class="kpi-sub {alert_color}">{alert_text}</div>
             </div>
@@ -353,7 +371,20 @@ if mode == "🗺️ National Risk Map (Historical)":
 
   st.write("")
 
-  # Mapbox / Geo Scatter
+  # Clean Formatting for Tooltip
+  day_df["rain_24h_str"] = day_df["rain_24h"].round(1).astype(str) + " mm"
+  day_df["rain_72h_str"] = day_df["rain_72h"].round(1).astype(str) + " mm"
+  day_df["soil_str"] = (day_df["soil_saturation_index"] * 100).round(1).astype(
+      str
+  ) + "%"
+  day_df["score_str"] = (
+      day_df["flood_risk_score"].round(1).astype(str)
+      + "% ("
+      + day_df["flood_category"]
+      + ")"
+  )
+
+  # Mapbox / Geo Scatter with Custom Tooltip
   fig = px.scatter_geo(
       day_df,
       lat="latitude",
@@ -361,16 +392,13 @@ if mode == "🗺️ National Risk Map (Historical)":
       color="flood_risk_score",
       size="rain_72h",
       hover_name="district",
-      hover_data={
-          "latitude": False,
-          "longitude": False,
-          "climatic_zone": True,
-          "rain_24h": ":.1f mm",
-          "rain_72h": ":.1f mm",
-          "soil_saturation_index": ":.3f",
-          "flood_risk_score": ":.1f",
-          "flood_category": True,
-      },
+      custom_data=[
+          "climatic_zone",
+          "rain_24h_str",
+          "rain_72h_str",
+          "soil_str",
+          "score_str",
+      ],
       color_continuous_scale=[
           (0.0, "#3fb950"),
           (0.3, "#d29922"),
@@ -381,6 +409,18 @@ if mode == "🗺️ National Risk Map (Historical)":
       size_max=36,
       height=640,
   )
+
+  fig.update_traces(
+      hovertemplate=(
+          "<b>📍 %{hovertext}</b><br><br>"
+          + "<b>Climatic Zone:</b> %{customdata[0]}<br>"
+          + "<b>24h Rainfall:</b> %{customdata[1]}<br>"
+          + "<b>72h Accumulation:</b> %{customdata[2]}<br>"
+          + "<b>Soil Saturation:</b> %{customdata[3]}<br>"
+          + "<b>Risk Assessment:</b> %{customdata[4]}<extra></extra>"
+      )
+  )
+
   fig.update_geos(
       center=dict(lat=7.8731, lon=80.7718),
       projection_scale=38,
@@ -459,17 +499,16 @@ elif mode == "🧪 Interactive Flood Simulator":
         help="Soil field capacity threshold is ~0.40. Above this, rain turns directly to runoff.",
     )
 
-  # Calculations
+  # Model Calculations
   p = gumbel_params[district_choice]
   p_extreme_24 = gumbel_r.cdf(sim_rain_24, p["loc_24"], p["scale_24"])
   soil_factor = np.clip((sim_soil - 0.20) / (0.50 - 0.20), 0.0, 1.0)
   sat_ratio = np.clip(sim_rain_72 / (p["t5_72"] + 1e-5), 0.0, 1.5)
 
-  raw_score = (
-      (0.40 * p_extreme_24)
-      + (0.35 * soil_factor * (sim_rain_24 > 15))
-      + (0.25 * (sat_ratio / 1.5))
-  )
+  w_extreme = 0.40 * p_extreme_24
+  w_soil = 0.35 * soil_factor * (sim_rain_24 > 15)
+  w_sat = 0.25 * (sat_ratio / 1.5)
+  raw_score = w_extreme + w_soil + w_sat
   risk_score = round(float(np.clip(raw_score * 100, 0, 100)), 1)
 
   non_exc = np.clip(p_extreme_24, 0.01, 0.99)
@@ -508,11 +547,20 @@ elif mode == "🧪 Interactive Flood Simulator":
           " floodplains."
       )
 
+    # Clean Floating Badge (Eliminates text overlap on gauge numbers)
+    st.markdown(
+        f"""
+            <div style="background-color:#161b22; border:1px solid {color}; border-radius:8px; padding:10px; text-align:center; margin-bottom:10px;">
+                <span style="color:{color}; font-size:16px; font-weight:700;">{badge}</span>
+            </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
     fig_gauge = go.Figure(
         go.Indicator(
             mode="gauge+number",
             value=risk_score,
-            title={"text": f"{badge}", "font": {"size": 15, "color": color}},
             gauge={
                 "axis": {"range": [0, 100], "tickcolor": "#8b949e"},
                 "bar": {"color": color},
@@ -528,15 +576,26 @@ elif mode == "🧪 Interactive Flood Simulator":
     fig_gauge.update_layout(
         paper_bgcolor="#0d1117",
         font_color="#ffffff",
-        height=270,
-        margin=dict(t=25, b=10, l=20, r=20),
+        height=240,
+        margin=dict(t=10, b=10, l=20, r=20),
     )
     st.plotly_chart(fig_gauge, use_container_width=True)
 
+    # Feature Contribution Breakdown
+    st.markdown(
+        "<p style='color:#8b949e; font-size:12px; font-weight:600;"
+        " margin-bottom:6px;'>🧠 HYDROLOGICAL COMPONENT BREAKDOWN</p>",
+        unsafe_allow_html=True,
+    )
+    c1, c2, c3 = st.columns(3)
+    c1.caption(f"🌧️ Tail Rain: **{(w_extreme/raw_score)*100:.0f}%**")
+    c2.caption(f"🌱 Soil Saturation: **{(w_soil/raw_score)*100:.0f}%**")
+    c3.caption(f"🌊 72h Runoff: **{(w_sat/raw_score)*100:.0f}%**")
+
     st.markdown(f"""
-        <div style="background:#161b22; border-left:4px solid #58a6ff; border-radius:8px; padding:12px 16px; margin-bottom:12px; border:1px solid #30363d; border-left:4px solid #58a6ff;">
+        <div style="background:#161b22; border-left:4px solid #58a6ff; border-radius:8px; padding:12px 16px; margin:10px 0; border:1px solid #30363d; border-left:4px solid #58a6ff;">
             <b style="color:#58a6ff; font-size:14px;">📊 Statistical Return Period:</b><br>
-            <span style="color:#f0f6fc; font-size:13px;">A <b>{sim_rain_24:.1f} mm</b> daily storm represents an estimated <b>1-in-{est_return_period}-Year Extreme Event</b> for {district_choice}.</span>
+            <span style="color:#f0f6fc; font-size:13px;">A <b>{sim_rain_24:.1f} mm</b> storm represents an estimated <b>1-in-{est_return_period}-Year Extreme Event</b> for {district_choice}.</span>
         </div>
         <div style="background:#161b22; border-left:4px solid {color}; border-radius:8px; padding:12px 16px; border:1px solid #30363d; border-left:4px solid {color};">
             <b style="color:{color}; font-size:14px;">🛡️ Action Protocol:</b><br>
@@ -554,10 +613,22 @@ elif mode == "📊 Statistical Return Periods":
       unsafe_allow_html=True,
   )
   st.markdown(
-      "<p style='color:#94a3b8; font-size:15px; margin-bottom:20px;'>Block"
+      "<p style='color:#94a3b8; font-size:15px; margin-bottom:15px;'>Block"
       " Maxima return period thresholds across Sri Lanka's Wet, Dry, and"
       " Intermediate Climatic Zones.</p>",
       unsafe_allow_html=True,
+  )
+
+  # Interactive Horizon Toggle
+  period_choice = st.radio(
+      "Select Return Period Threshold:",
+      ["10-Year Extreme Storm", "25-Year Catastrophic Storm"],
+      horizontal=True,
+  )
+  col_metric = (
+      "10-Year Extreme (mm)"
+      if "10-Year" in period_choice
+      else "25-Year Catastrophic (mm)"
   )
 
   summary_rows = []
@@ -570,17 +641,17 @@ elif mode == "📊 Statistical Return Periods":
         "25-Year Catastrophic (mm)": round(p["t25_24"], 1),
     })
   s_df = pd.DataFrame(summary_rows).sort_values(
-      by=["Climatic Zone", "10-Year Extreme (mm)"], ascending=[True, True]
+      by=["Climatic Zone", col_metric], ascending=[True, True]
   )
 
   fig_b = px.bar(
       s_df,
-      x="10-Year Extreme (mm)",
+      x=col_metric,
       y="District",
       color="Climatic Zone",
       orientation="h",
-      text="10-Year Extreme (mm)",
-      height=740,
+      text=col_metric,
+      height=720,
       color_discrete_map={
           "Wet": "#58a6ff",
           "Intermediate": "#d29922",
@@ -592,5 +663,25 @@ elif mode == "📊 Statistical Return Periods":
       plot_bgcolor="#161b22",
       font_color="#f0f6fc",
       xaxis=dict(gridcolor="#30363d"),
+      margin=dict(t=20, b=20, l=10, r=10),
   )
   st.plotly_chart(fig_b, use_container_width=True)
+
+  # Expandable Methodology Card (The Academic Foundation)
+  with st.expander("ℹ️ Applied Statistics & Mathematical Formulation"):
+    st.markdown(r"""
+        ### Extreme Value Theory (EVT) Formulation
+        Floods and extreme climate risks are determined by heavy-tailed precipitation distributions. Using the **Block Maxima method** across annual maximums, each district is fitted with a **Gumbel Extreme Value Distribution**:
+        
+        $$F(x; \mu, \beta) = \exp\left(-\exp\left(-\frac{x - \mu}{\beta}\right)\right)$$
+        
+        Where:
+        * $\mu$ (location parameter) represents the typical seasonal peak rainfall.
+        * $\beta$ (scale parameter) captures the dispersion of extreme storms.
+        
+        The Return Period $T$ for rainfall threshold $x_T$ is calculated via:
+        $$x_T = \mu - \beta \ln\left(-\ln\left(1 - \frac{1}{T}\right)\right)$$
+        
+        ### Antecedent Hydrological Runoff Coupling
+        A storm occurring on dry ground infiltrates harmlessly, while the same storm on saturated soil ($\text{Soil Moisture} > 0.40 \text{ m}^3/\text{m}^3$) triggers sudden inundation. LankaFlood-AI couples the Gumbel tail probability with **Antecedent Precipitation Saturation** ($R_{72}$) and **Topsoil Field Capacity** proxies to compute the unified risk score.
+        """)
