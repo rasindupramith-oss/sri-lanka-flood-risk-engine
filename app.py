@@ -13,16 +13,86 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-# Custom Styling
+# 2. Polished High-Contrast CSS
 st.markdown(
     """
     <style>
-    .main { background-color: #0b0f19; }
-    .stMetric {
-        background-color: #1a2234;
-        border-radius: 8px;
-        padding: 10px 15px;
-        border-left: 4px solid #3498db;
+    /* Dark Theme Core */
+    .stApp {
+        background-color: #0d1117;
+        color: #f0f6fc;
+    }
+    
+    /* Sleek High-Contrast KPI Cards */
+    .kpi-container {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+    .kpi-card {
+        background: linear-gradient(135deg, #161b22 0%, #21262d 100%);
+        border: 1px solid #30363d;
+        border-radius: 12px;
+        padding: 18px 20px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+    .kpi-card:hover {
+        border-color: #58a6ff;
+        transform: translateY(-2px);
+    }
+    .kpi-label {
+        color: #8b949e !important;
+        font-size: 13px !important;
+        font-weight: 600 !important;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 6px;
+    }
+    .kpi-value {
+        color: #ffffff !important;
+        font-size: 26px !important;
+        font-weight: 700 !important;
+        line-height: 1.2;
+    }
+    .kpi-sub {
+        font-size: 12px !important;
+        font-weight: 500;
+        margin-top: 6px;
+    }
+    .kpi-alert {
+        color: #f85149 !important;
+    }
+    .kpi-good {
+        color: #3fb950 !important;
+    }
+    .kpi-info {
+        color: #58a6ff !important;
+    }
+
+    /* Sidebar Styling */
+    section[data-testid="stSidebar"] {
+        background-color: #161b22;
+        border-right: 1px solid #30363d;
+    }
+    .sidebar-author {
+        background: #0d1117;
+        border: 1px solid #30363d;
+        border-radius: 10px;
+        padding: 12px;
+        margin-bottom: 20px;
+    }
+    .sys-badge {
+        display: inline-block;
+        background-color: #21262d;
+        color: #58a6ff;
+        border: 1px solid #388bfd33;
+        border-radius: 6px;
+        padding: 3px 8px;
+        font-size: 11px;
+        font-weight: 600;
+        margin-right: 4px;
+        margin-bottom: 4px;
     }
     </style>
 """,
@@ -30,7 +100,7 @@ st.markdown(
 )
 
 
-# 2. Load & Cache Modeled Data
+# 3. Data Loading & GEV Calibration
 @st.cache_data
 def load_data():
   df = pd.read_csv("sri_lanka_flood_risk_modeled.csv")
@@ -41,14 +111,10 @@ def load_data():
 try:
   df = load_data()
 except Exception:
-  st.error(
-      "⚠️ Dataset 'sri_lanka_flood_risk_modeled.csv' not found. Please ensure"
-      " the CSV is in the root directory."
-  )
+  st.error("⚠️ Dataset not found. Please ensure CSV is present.")
   st.stop()
 
 
-# 3. Precompute Gumbel Parameters per District
 @st.cache_data
 def get_gumbel_parameters(data):
   params = {}
@@ -77,51 +143,89 @@ def get_gumbel_parameters(data):
 
 gumbel_params = get_gumbel_parameters(df)
 
-# --- HEADER SECTION ---
-st.title("🌧️ LankaFlood-AI: National Extreme Weather Risk Engine")
-st.markdown(
-    "**Applied Statistics & Extreme Value Theory (GEV) for Sri Lanka's 25"
-    " Districts** | *Rasindu Pramith • BSc (Hons) in Applied Statistics, UoC*"
-)
-st.divider()
+# ==========================================
+# SIDEBAR: COMMAND CENTER & NAVIGATION
+# ==========================================
+with st.sidebar:
+  st.markdown(
+      """
+        <div class="sidebar-author">
+            <h4 style="margin:0; color:#ffffff;">Rasindu Pramith</h4>
+            <p style="margin:2px 0 8px 0; font-size:12px; color:#8b949e;">BSc (Hons) in Applied Statistics<br>Faculty of Science • University of Colombo</p>
+            <span class="sys-badge">🎓 UoC Stats</span>
+            <span class="sys-badge">⚡ Extreme Value Theory</span>
+            <span class="sys-badge">🛰️ ECMWF ERA5</span>
+        </div>
+    """,
+      unsafe_allow_html=True,
+  )
 
-# Sidebar Navigation
-mode = st.sidebar.radio(
-    "Navigation",
-    [
-        "🗺️ National Risk Map (Historical)",
-        "🧪 Interactive Flood Simulator",
-        "📊 Statistical Return Periods",
-    ],
-)
+  st.markdown("### 🧭 Navigation")
+  mode = st.radio(
+      label="Choose View Mode:",
+      options=[
+          "🗺️ National Risk Map (Historical)",
+          "🧪 Interactive Flood Simulator",
+          "📊 Statistical Return Periods",
+      ],
+      label_visibility="collapsed",
+  )
+
+  st.divider()
+  st.markdown("### 📡 System Telemetry")
+  st.markdown("""
+        - **Monitored Nodes:** `25 Districts`
+        - **Temporal Depth:** `10 Years (2015-2024)`
+        - **Total Records:** `91,325 Days`
+        - **Physical Anchor:** `Cyclone Roanu Ground Truth`
+    """)
+
+  st.divider()
+  col_btn1, col_btn2 = st.columns(2)
+  with col_btn1:
+    st.link_button(
+        "💼 LinkedIn",
+        "https://www.linkedin.com/in/rasindu-pramith/",
+        use_container_width=True,
+    )
+  with col_btn2:
+    st.link_button(
+        "💻 GitHub",
+        "https://github.com/rasindupramith-oss",
+        use_container_width=True,
+    )
 
 # ==========================================
 # TAB 1: NATIONAL RISK MAP (HISTORICAL VIEWER)
 # ==========================================
 if mode == "🗺️ National Risk Map (Historical)":
-  st.subheader("🗺️ Island-Wide Flood & Inundation Risk Map")
+  st.title("🌧️ LankaFlood-AI: National Risk Map")
+  st.caption(
+      "Spatial-temporal inundation probability modeled via Generalized Extreme"
+      " Value theory across Sri Lanka."
+  )
 
-  col_ctrl, col_info = st.columns([1, 2])
-  with col_ctrl:
+  c_sel1, c_sel2 = st.columns([1.5, 1])
+  with c_sel1:
     quick_pick = st.selectbox(
-        "Select Notable Historical Event:",
+        "⚡ Select Disaster Benchmark Event:",
         [
-            "Custom Date",
             "May 16, 2016 (Cyclone Roanu Catastrophe)",
             "May 25, 2017 (Southwest Monsoon Surge)",
             "Nov 10, 2023 (Inter-Monsoon Bursts)",
+            "Custom Date",
         ],
     )
-    if quick_pick == "May 16, 2016 (Cyclone Roanu Catastrophe)":
+    if "2016" in quick_pick:
       selected_date = pd.to_datetime("2016-05-16")
-    elif quick_pick == "May 25, 2017 (Southwest Monsoon Surge)":
+    elif "2017" in quick_pick:
       selected_date = pd.to_datetime("2017-05-25")
-    elif quick_pick == "Nov 10, 2023 (Inter-Monsoon Bursts)":
+    elif "2023" in quick_pick:
       selected_date = pd.to_datetime("2023-11-10")
     else:
       selected_date = pd.to_datetime(
           st.date_input(
-              "Choose Date:",
+              "Custom Date:",
               value=pd.to_datetime("2016-05-16"),
               min_value=df["date"].min(),
               max_value=df["date"].max(),
@@ -129,30 +233,74 @@ if mode == "🗺️ National Risk Map (Historical)":
       )
 
   day_df = df[df["date"] == selected_date]
-
   critical_count = len(
       day_df[day_df["flood_category"].str.contains("Critical")]
   )
   max_rain_district = day_df.loc[day_df["rain_24h"].idxmax()]
+  mean_soil = day_df["soil_saturation_index"].mean()
 
-  m1, m2, m3, m4 = st.columns(4)
-  m1.metric("Date Inspected", selected_date.strftime("%Y-%m-%d"))
-  m2.metric(
-      "Critical Emergency Districts",
-      f"{critical_count} / 25",
-      delta=f"{critical_count} Alert" if critical_count > 0 else "Normal",
-      delta_color="inverse",
-  )
-  m3.metric(
-      "Peak 24h Rain",
-      f"{max_rain_district['rain_24h']:.1f} mm",
-      max_rain_district["district"],
-  )
-  m4.metric(
-      "Average Soil Saturation", f"{day_df['soil_saturation_index'].mean():.2%}"
-  )
+  # --- CUSTOM HIGH-CONTRAST KPI CARDS ---
+  col1, col2, col3, col4 = st.columns(4)
+  with col1:
+    st.markdown(
+        f"""
+            <div class="kpi-card">
+                <div class="kpi-label">Date Inspected</div>
+                <div class="kpi-value">{selected_date.strftime('%Y-%m-%d')}</div>
+                <div class="kpi-sub kpi-info">📅 ERA5 Verified Reanalysis</div>
+            </div>
+        """,
+        unsafe_allow_html=True,
+    )
+  with col2:
+    alert_color = "kpi-alert" if critical_count > 0 else "kpi-good"
+    alert_text = (
+        f"🚨 {critical_count} Districts in Critical State"
+        if critical_count > 0
+        else "🟢 All 25 Districts Normal"
+    )
+    st.markdown(
+        f"""
+            <div class="kpi-card">
+                <div class="kpi-label">Critical Overflow Alerts</div>
+                <div class="kpi-value">{critical_count} <span style="font-size:16px; color:#8b949e;">/ 25</span></div>
+                <div class="kpi-sub {alert_color}">{alert_text}</div>
+            </div>
+        """,
+        unsafe_allow_html=True,
+    )
+  with col3:
+    st.markdown(
+        f"""
+            <div class="kpi-card">
+                <div class="kpi-label">Peak 24h Rainfall</div>
+                <div class="kpi-value">{max_rain_district['rain_24h']:.1f} <span style="font-size:16px; color:#8b949e;">mm</span></div>
+                <div class="kpi-sub kpi-info">📍 {max_rain_district['district']} ({max_rain_district['province']})</div>
+            </div>
+        """,
+        unsafe_allow_html=True,
+    )
+  with col4:
+    sat_status = "kpi-alert" if mean_soil > 0.40 else "kpi-good"
+    sat_note = (
+        "⚠️ High Runoff Potential"
+        if mean_soil > 0.40
+        else " Absorbing Normal"
+    )
+    st.markdown(
+        f"""
+            <div class="kpi-card">
+                <div class="kpi-label">Island Mean Soil Saturation</div>
+                <div class="kpi-value">{mean_soil:.1%}</div>
+                <div class="kpi-sub {sat_status}">{sat_note}</div>
+            </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
-  # Plotly Map
+  st.write("")  # Spacing
+
+  # Geospatial Map
   fig = px.scatter_geo(
       day_df,
       lat="latitude",
@@ -171,14 +319,14 @@ if mode == "🗺️ National Risk Map (Historical)":
           "flood_category": True,
       },
       color_continuous_scale=[
-          (0.0, "#2ecc71"),
-          (0.3, "#f1c40f"),
-          (0.6, "#e67e22"),
-          (1.0, "#e74c3c"),
+          (0.0, "#3fb950"),
+          (0.3, "#d29922"),
+          (0.6, "#db6d28"),
+          (1.0, "#f85149"),
       ],
       range_color=[0, 100],
-      size_max=35,
-      height=650,
+      size_max=36,
+      height=640,
   )
   fig.update_geos(
       center=dict(lat=7.8731, lon=80.7718),
@@ -186,16 +334,16 @@ if mode == "🗺️ National Risk Map (Historical)":
       visible=True,
       showcountries=False,
       showcoastlines=True,
-      coastlinecolor="#7f8c8d",
+      coastlinecolor="#484f58",
       showland=True,
-      landcolor="#1e272e",
+      landcolor="#161b22",
       showocean=True,
-      oceancolor="#0f141d",
-      bgcolor="#0b0f19",
+      oceancolor="#090d16",
+      bgcolor="#0d1117",
   )
   fig.update_layout(
-      paper_bgcolor="#0b0f19",
-      font_color="#ecf0f1",
+      paper_bgcolor="#0d1117",
+      font_color="#f0f6fc",
       margin=dict(r=0, t=10, b=0, l=0),
   )
   st.plotly_chart(fig, use_container_width=True)
@@ -204,22 +352,22 @@ if mode == "🗺️ National Risk Map (Historical)":
 # TAB 2: INTERACTIVE WHAT-IF SIMULATOR
 # ==========================================
 elif mode == "🧪 Interactive Flood Simulator":
-  st.subheader("🧪 Real-Time Flood Scenario Simulator")
-  st.markdown(
-      "Simulate intense precipitation & ground saturation scenarios to"
-      " calculate localized inundation probability."
+  st.title("🧪 Real-Time Flood Scenario Simulator")
+  st.caption(
+      "Calibrated Hydrological Decision-Support: Simulate rainfall intensity"
+      " and ground saturation to compute localized inundation probability."
   )
 
-  col_input, col_result = st.columns([1, 1])
+  col_input, col_result = st.columns([1, 1.1])
 
   with col_input:
+    st.markdown("#### ⚙️ Input Parameters")
     district_choice = st.selectbox(
-        "Select Target District:", sorted(df["district"].unique()), index=4
+        "Target District:", sorted(df["district"].unique()), index=4
     )
     meta = df[df["district"] == district_choice].iloc[0]
-    st.caption(
-        f"📍 **Province:** {meta['province']} | **Zone:**"
-        f" {meta['climatic_zone']}"
+    st.markdown(
+        f"`Province: {meta['province']}` | `Zone: {meta['climatic_zone']}`"
     )
 
     sim_rain_24 = st.slider(
@@ -237,17 +385,15 @@ elif mode == "🧪 Interactive Flood Simulator":
         step=10.0,
     )
     sim_soil = st.slider(
-        "Current Soil Moisture Saturation:",
+        "Current Soil Saturation Index:",
         min_value=0.10,
         max_value=0.55,
         value=0.46,
         step=0.01,
-        help=(
-            "Values > 0.40 indicate near field capacity (water cannot seep in)."
-        ),
+        help="Soil field capacity threshold is ~0.40. Above this, rain turns directly to runoff.",
     )
 
-  # Calculation
+  # Model Calculations
   p = gumbel_params[district_choice]
   p_extreme_24 = gumbel_r.cdf(sim_rain_24, p["loc_24"], p["scale_24"])
   soil_factor = np.clip((sim_soil - 0.20) / (0.50 - 0.20), 0.0, 1.0)
@@ -264,32 +410,32 @@ elif mode == "🧪 Interactive Flood Simulator":
   est_return_period = round(1.0 / (1.0 - non_exc), 1)
 
   with col_result:
-    st.markdown("### 🚨 Engine Prediction Output")
+    st.markdown("#### 🚨 Predictive Risk Output")
 
     if risk_score < 30:
-      color = "#2ecc71"
+      color = "#3fb950"
       badge = "🟢 NORMAL / LOW RISK"
-      rec = "No danger detected. Standard drainage capacity adequate."
+      rec = "Standard municipal drainage adequate. No public warnings required."
     elif risk_score < 60:
-      color = "#f1c40f"
+      color = "#d29922"
       badge = "🟡 ADVISORY: WATERLOGGING"
       rec = (
-          "Localized surface runoff. Flash pooling on low-lying secondary"
-          " roads."
+          "Localized pooling on low-lying road networks. Advise transit"
+          " caution."
       )
     elif risk_score < 80:
-      color = "#e67e22"
+      color = "#db6d28"
       badge = "🟠 HIGH WARNING: RIVER INUNDATION"
       rec = (
-          "River basins approaching bankfull. Activate flood pumps and prepare"
-          " staging areas."
+          "Basins approaching bankfull. Stage emergency pumps and prepare"
+          " low-lying sectors."
       )
     else:
-      color = "#e74c3c"
+      color = "#f85149"
       badge = "🔴 CRITICAL EMERGENCY: CATASTROPHIC OVERFLOW"
       rec = (
-          "Severe inundation imminent. Issue immediate evacuation alerts for"
-          " low-lying zones."
+          "Severe flooding imminent. Issue immediate evacuation alerts for"
+          " floodplains."
       )
 
     fig_gauge = go.Figure(
@@ -297,44 +443,48 @@ elif mode == "🧪 Interactive Flood Simulator":
             mode="gauge+number",
             value=risk_score,
             title={
-                "text": f"Risk Score: {badge}",
-                "font": {"size": 17, "color": color},
+                "text": f"{badge}",
+                "font": {"size": 16, "color": color},
             },
             gauge={
-                "axis": {"range": [0, 100]},
+                "axis": {"range": [0, 100], "tickcolor": "#8b949e"},
                 "bar": {"color": color},
                 "steps": [
-                    {"range": [0, 30], "color": "rgba(46, 204, 113, 0.2)"},
-                    {"range": [30, 60], "color": "rgba(241, 196, 15, 0.2)"},
-                    {"range": [60, 80], "color": "rgba(230, 126, 34, 0.2)"},
-                    {"range": [80, 100], "color": "rgba(231, 76, 60, 0.2)"},
+                    {"range": [0, 30], "color": "rgba(63, 185, 80, 0.15)"},
+                    {"range": [30, 60], "color": "rgba(210, 153, 34, 0.15)"},
+                    {"range": [60, 80], "color": "rgba(219, 109, 40, 0.15)"},
+                    {"range": [80, 100], "color": "rgba(248, 81, 73, 0.15)"},
                 ],
             },
         )
     )
     fig_gauge.update_layout(
-        paper_bgcolor="#0b0f19",
+        paper_bgcolor="#0d1117",
         font_color="#ffffff",
-        height=300,
-        margin=dict(t=30, b=10, l=20, r=20),
+        height=280,
+        margin=dict(t=25, b=10, l=20, r=20),
     )
     st.plotly_chart(fig_gauge, use_container_width=True)
 
-    st.info(
-        f"📊 **Statistical Return Period:** This storm volume represents an"
-        f" estimated **1-in-{est_return_period}-Year Event** for"
-        f" {district_choice}."
-    )
-    st.warning(f"🛡️ **Action Protocol:** {rec}")
+    st.markdown(f"""
+        <div style="background:#161b22; border-left:4px solid #58a6ff; border-radius:6px; padding:12px; margin-bottom:10px;">
+            <b style="color:#58a6ff;">📊 Statistical Return Period:</b><br>
+            A <b>{sim_rain_24:.1f} mm</b> daily rainfall event represents an estimated <b>1-in-{est_return_period}-Year Extreme Event</b> for {district_choice}.
+        </div>
+        <div style="background:#161b22; border-left:4px solid {color}; border-radius:6px; padding:12px;">
+            <b style="color:{color};">🛡️ Action Protocol:</b><br>
+            {rec}
+        </div>
+        """, unsafe_allow_html=True)
 
 # ==========================================
 # TAB 3: STATISTICAL RETURN PERIODS
 # ==========================================
 elif mode == "📊 Statistical Return Periods":
-  st.subheader("📊 Gumbel Extreme Value Analysis by Climatic Zone")
-  st.markdown(
-      "Return period thresholds calculated using the **Block Maxima method**"
-      " across 10 years of ECMWF ERA5 reanalysis data."
+  st.title("📊 Gumbel Extreme Value Analysis")
+  st.caption(
+      "Block Maxima return period thresholds across Sri Lanka's Wet, Dry, and"
+      " Intermediate Climatic Zones."
   )
 
   summary_rows = []
@@ -357,17 +507,17 @@ elif mode == "📊 Statistical Return Periods":
       color="Climatic Zone",
       orientation="h",
       text="10-Year Extreme (mm)",
-      height=720,
+      height=740,
       color_discrete_map={
-          "Wet": "#3498db",
-          "Intermediate": "#f39c12",
-          "Dry": "#e74c3c",
+          "Wet": "#58a6ff",
+          "Intermediate": "#d29922",
+          "Dry": "#f85149",
       },
   )
   fig_b.update_layout(
-      paper_bgcolor="#0b0f19",
-      plot_bgcolor="#1e272e",
-      font_color="#ecf0f1",
-      xaxis=dict(gridcolor="#2c3e50"),
+      paper_bgcolor="#0d1117",
+      plot_bgcolor="#161b22",
+      font_color="#f0f6fc",
+      xaxis=dict(gridcolor="#30363d"),
   )
   st.plotly_chart(fig_b, use_container_width=True)
