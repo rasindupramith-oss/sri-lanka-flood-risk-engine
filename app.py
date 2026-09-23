@@ -13,28 +13,73 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-# 2. Polished High-Contrast CSS
+# 2. Comprehensive High-Contrast Dark Theme CSS
 st.markdown(
     """
     <style>
-    /* Dark Theme Core */
+    /* Global Page Styling */
     .stApp {
-        background-color: #0d1117;
-        color: #f0f6fc;
+        background-color: #0d1117 !important;
+        color: #f0f6fc !important;
     }
-    
-    /* Sleek High-Contrast KPI Cards */
-    .kpi-container {
-        display: flex;
-        gap: 15px;
-        margin-bottom: 20px;
+
+    /* FORCED CRISP TEXT ON ALL WIDGET LABELS (Dropdowns, Sliders, Inputs) */
+    label[data-testid="stWidgetLabel"] p, 
+    label[data-testid="stWidgetLabel"] span,
+    .stSelectbox label p,
+    .stSlider label p,
+    .stDateInput label p {
+        color: #f0f6fc !important;
+        font-size: 15px !important;
+        font-weight: 600 !important;
+        letter-spacing: 0.3px !important;
     }
+
+    /* SIDEBAR TEXT & BULLET POINTS FIX */
+    section[data-testid="stSidebar"] {
+        background-color: #161b22 !important;
+        border-right: 1px solid #30363d !important;
+    }
+    section[data-testid="stSidebar"] p,
+    section[data-testid="stSidebar"] span,
+    section[data-testid="stSidebar"] li,
+    section[data-testid="stSidebar"] h1,
+    section[data-testid="stSidebar"] h2,
+    section[data-testid="stSidebar"] h3,
+    section[data-testid="stSidebar"] h4 {
+        color: #e6edf3 !important;
+    }
+    section[data-testid="stSidebar"] li {
+        margin-bottom: 6px !important;
+        font-size: 14px !important;
+    }
+
+    /* NAVIGATION RADIO BUTTONS: HIGH CONTRAST & CARD LOOK */
+    div[data-testid="stRadio"] div[role="radiogroup"] label {
+        background-color: #21262d !important;
+        border: 1px solid #30363d !important;
+        border-radius: 8px !important;
+        padding: 8px 14px !important;
+        margin-bottom: 8px !important;
+        transition: all 0.2s ease !important;
+    }
+    div[data-testid="stRadio"] div[role="radiogroup"] label:hover {
+        border-color: #58a6ff !important;
+        background-color: #30363d !important;
+    }
+    div[data-testid="stRadio"] div[role="radiogroup"] label p {
+        color: #ffffff !important;
+        font-size: 14px !important;
+        font-weight: 600 !important;
+    }
+
+    /* KPI CARDS ENHANCED CONTRAST */
     .kpi-card {
-        background: linear-gradient(135deg, #161b22 0%, #21262d 100%);
-        border: 1px solid #30363d;
+        background: linear-gradient(135deg, #1c2128 0%, #252c37 100%);
+        border: 1px solid #384252;
         border-radius: 12px;
         padding: 18px 20px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
         transition: transform 0.2s ease, border-color 0.2s ease;
     }
     .kpi-card:hover {
@@ -42,51 +87,41 @@ st.markdown(
         transform: translateY(-2px);
     }
     .kpi-label {
-        color: #8b949e !important;
-        font-size: 13px !important;
-        font-weight: 600 !important;
+        color: #94a3b8 !important;
+        font-size: 12px !important;
+        font-weight: 700 !important;
         text-transform: uppercase;
-        letter-spacing: 0.5px;
+        letter-spacing: 0.6px;
         margin-bottom: 6px;
     }
     .kpi-value {
         color: #ffffff !important;
         font-size: 26px !important;
-        font-weight: 700 !important;
+        font-weight: 800 !important;
         line-height: 1.2;
     }
     .kpi-sub {
         font-size: 12px !important;
-        font-weight: 500;
-        margin-top: 6px;
+        font-weight: 600;
+        margin-top: 8px;
     }
-    .kpi-alert {
-        color: #f85149 !important;
-    }
-    .kpi-good {
-        color: #3fb950 !important;
-    }
-    .kpi-info {
-        color: #58a6ff !important;
-    }
+    .kpi-alert { color: #ff6b6b !important; }
+    .kpi-good  { color: #4cd964 !important; }
+    .kpi-info  { color: #58a6ff !important; }
 
-    /* Sidebar Styling */
-    section[data-testid="stSidebar"] {
-        background-color: #161b22;
-        border-right: 1px solid #30363d;
-    }
+    /* AUTHOR BADGE IN SIDEBAR */
     .sidebar-author {
         background: #0d1117;
         border: 1px solid #30363d;
         border-radius: 10px;
-        padding: 12px;
+        padding: 14px;
         margin-bottom: 20px;
     }
     .sys-badge {
         display: inline-block;
         background-color: #21262d;
-        color: #58a6ff;
-        border: 1px solid #388bfd33;
+        color: #79c0ff;
+        border: 1px solid #388bfd44;
         border-radius: 6px;
         padding: 3px 8px;
         font-size: 11px;
@@ -150,19 +185,27 @@ with st.sidebar:
   st.markdown(
       """
         <div class="sidebar-author">
-            <h4 style="margin:0; color:#ffffff;">Rasindu Pramith</h4>
-            <p style="margin:2px 0 8px 0; font-size:12px; color:#8b949e;">BSc (Hons) in Applied Statistics<br>Faculty of Science • University of Colombo</p>
-            <span class="sys-badge">🎓 UoC Stats</span>
-            <span class="sys-badge">⚡ Extreme Value Theory</span>
-            <span class="sys-badge">🛰️ ECMWF ERA5</span>
+            <h4 style="margin:0 0 4px 0; color:#ffffff; font-size:17px;">Rasindu Pramith</h4>
+            <p style="margin:0 0 10px 0; font-size:12px; color:#8b949e; line-height:1.4;">
+                BSc (Hons) in Applied Statistics<br>
+                Faculty of Science • University of Colombo
+            </p>
+            <div>
+                <span class="sys-badge">🎓 UoC Stats</span>
+                <span class="sys-badge">⚡ GEV Theory</span>
+                <span class="sys-badge">🛰️ ERA5 Reanalysis</span>
+            </div>
         </div>
     """,
       unsafe_allow_html=True,
   )
 
-  st.markdown("### 🧭 Navigation")
+  st.markdown(
+      "<h4 style='color:#ffffff; margin-bottom:8px;'>🧭 Control Center</h4>",
+      unsafe_allow_html=True,
+  )
   mode = st.radio(
-      label="Choose View Mode:",
+      label="Navigation",
       options=[
           "🗺️ National Risk Map (Historical)",
           "🧪 Interactive Flood Simulator",
@@ -171,16 +214,19 @@ with st.sidebar:
       label_visibility="collapsed",
   )
 
-  st.divider()
-  st.markdown("### 📡 System Telemetry")
+  st.markdown("<hr style='border-color:#30363d;'>", unsafe_allow_html=True)
+  st.markdown(
+      "<h4 style='color:#ffffff; margin-bottom:8px;'>📡 System Telemetry</h4>",
+      unsafe_allow_html=True,
+  )
   st.markdown("""
-        - **Monitored Nodes:** `25 Districts`
-        - **Temporal Depth:** `10 Years (2015-2024)`
-        - **Total Records:** `91,325 Days`
-        - **Physical Anchor:** `Cyclone Roanu Ground Truth`
+        * **Monitored Nodes:** `25 Districts`
+        * **Temporal Depth:** `10 Years (2015–2024)`
+        * **Total Records:** `91,325 Days`
+        * **Physical Benchmark:** `Cyclone Roanu Disaster`
     """)
 
-  st.divider()
+  st.markdown("<hr style='border-color:#30363d;'>", unsafe_allow_html=True)
   col_btn1, col_btn2 = st.columns(2)
   with col_btn1:
     st.link_button(
@@ -199,13 +245,19 @@ with st.sidebar:
 # TAB 1: NATIONAL RISK MAP (HISTORICAL VIEWER)
 # ==========================================
 if mode == "🗺️ National Risk Map (Historical)":
-  st.title("🌧️ LankaFlood-AI: National Risk Map")
-  st.caption(
-      "Spatial-temporal inundation probability modeled via Generalized Extreme"
-      " Value theory across Sri Lanka."
+  st.markdown(
+      "<h1 style='color:#ffffff; margin-bottom:2px;'>🌧️ LankaFlood-AI:"
+      " National Risk Map</h1>",
+      unsafe_allow_html=True,
+  )
+  st.markdown(
+      "<p style='color:#94a3b8; font-size:15px; margin-bottom:20px;'>Spatial-temporal"
+      " inundation probability modeled via Generalized Extreme Value theory"
+      " across Sri Lanka.</p>",
+      unsafe_allow_html=True,
   )
 
-  c_sel1, c_sel2 = st.columns([1.5, 1])
+  c_sel1, c_sel2 = st.columns([1.6, 1])
   with c_sel1:
     quick_pick = st.selectbox(
         "⚡ Select Disaster Benchmark Event:",
@@ -239,7 +291,8 @@ if mode == "🗺️ National Risk Map (Historical)":
   max_rain_district = day_df.loc[day_df["rain_24h"].idxmax()]
   mean_soil = day_df["soil_saturation_index"].mean()
 
-  # --- CUSTOM HIGH-CONTRAST KPI CARDS ---
+  st.write("")
+  # High-Contrast KPI Cards
   col1, col2, col3, col4 = st.columns(4)
   with col1:
     st.markdown(
@@ -247,7 +300,7 @@ if mode == "🗺️ National Risk Map (Historical)":
             <div class="kpi-card">
                 <div class="kpi-label">Date Inspected</div>
                 <div class="kpi-value">{selected_date.strftime('%Y-%m-%d')}</div>
-                <div class="kpi-sub kpi-info">📅 ERA5 Verified Reanalysis</div>
+                <div class="kpi-sub kpi-info">📅 ECMWF ERA5 Reanalysis</div>
             </div>
         """,
         unsafe_allow_html=True,
@@ -285,7 +338,7 @@ if mode == "🗺️ National Risk Map (Historical)":
     sat_note = (
         "⚠️ High Runoff Potential"
         if mean_soil > 0.40
-        else " Absorbing Normal"
+        else "🟢 Ground Absorptive"
     )
     st.markdown(
         f"""
@@ -298,9 +351,9 @@ if mode == "🗺️ National Risk Map (Historical)":
         unsafe_allow_html=True,
     )
 
-  st.write("")  # Spacing
+  st.write("")
 
-  # Geospatial Map
+  # Mapbox / Geo Scatter
   fig = px.scatter_geo(
       day_df,
       lat="latitude",
@@ -352,22 +405,35 @@ if mode == "🗺️ National Risk Map (Historical)":
 # TAB 2: INTERACTIVE WHAT-IF SIMULATOR
 # ==========================================
 elif mode == "🧪 Interactive Flood Simulator":
-  st.title("🧪 Real-Time Flood Scenario Simulator")
-  st.caption(
-      "Calibrated Hydrological Decision-Support: Simulate rainfall intensity"
-      " and ground saturation to compute localized inundation probability."
+  st.markdown(
+      "<h1 style='color:#ffffff; margin-bottom:2px;'>🧪 Real-Time Flood"
+      " Scenario Simulator</h1>",
+      unsafe_allow_html=True,
+  )
+  st.markdown(
+      "<p style='color:#94a3b8; font-size:15px; margin-bottom:20px;'>Simulate"
+      " precipitation intensity & ground saturation to compute localized"
+      " inundation probability in real time.</p>",
+      unsafe_allow_html=True,
   )
 
   col_input, col_result = st.columns([1, 1.1])
 
   with col_input:
-    st.markdown("#### ⚙️ Input Parameters")
+    st.markdown(
+        "<h4 style='color:#ffffff; border-bottom:1px solid #30363d;"
+        " padding-bottom:6px;'>⚙️ Input Scenario</h4>",
+        unsafe_allow_html=True,
+    )
     district_choice = st.selectbox(
         "Target District:", sorted(df["district"].unique()), index=4
     )
     meta = df[df["district"] == district_choice].iloc[0]
     st.markdown(
-        f"`Province: {meta['province']}` | `Zone: {meta['climatic_zone']}`"
+        f"<span style='color:#79c0ff; font-weight:600;'>Province:"
+        f" {meta['province']}</span> | <span style='color:#e3b341;"
+        f" font-weight:600;'>Climatic Zone: {meta['climatic_zone']}</span>",
+        unsafe_allow_html=True,
     )
 
     sim_rain_24 = st.slider(
@@ -393,7 +459,7 @@ elif mode == "🧪 Interactive Flood Simulator":
         help="Soil field capacity threshold is ~0.40. Above this, rain turns directly to runoff.",
     )
 
-  # Model Calculations
+  # Calculations
   p = gumbel_params[district_choice]
   p_extreme_24 = gumbel_r.cdf(sim_rain_24, p["loc_24"], p["scale_24"])
   soil_factor = np.clip((sim_soil - 0.20) / (0.50 - 0.20), 0.0, 1.0)
@@ -410,7 +476,11 @@ elif mode == "🧪 Interactive Flood Simulator":
   est_return_period = round(1.0 / (1.0 - non_exc), 1)
 
   with col_result:
-    st.markdown("#### 🚨 Predictive Risk Output")
+    st.markdown(
+        "<h4 style='color:#ffffff; border-bottom:1px solid #30363d;"
+        " padding-bottom:6px;'>🚨 Predictive Output</h4>",
+        unsafe_allow_html=True,
+    )
 
     if risk_score < 30:
       color = "#3fb950"
@@ -442,10 +512,7 @@ elif mode == "🧪 Interactive Flood Simulator":
         go.Indicator(
             mode="gauge+number",
             value=risk_score,
-            title={
-                "text": f"{badge}",
-                "font": {"size": 16, "color": color},
-            },
+            title={"text": f"{badge}", "font": {"size": 15, "color": color}},
             gauge={
                 "axis": {"range": [0, 100], "tickcolor": "#8b949e"},
                 "bar": {"color": color},
@@ -461,19 +528,19 @@ elif mode == "🧪 Interactive Flood Simulator":
     fig_gauge.update_layout(
         paper_bgcolor="#0d1117",
         font_color="#ffffff",
-        height=280,
+        height=270,
         margin=dict(t=25, b=10, l=20, r=20),
     )
     st.plotly_chart(fig_gauge, use_container_width=True)
 
     st.markdown(f"""
-        <div style="background:#161b22; border-left:4px solid #58a6ff; border-radius:6px; padding:12px; margin-bottom:10px;">
-            <b style="color:#58a6ff;">📊 Statistical Return Period:</b><br>
-            A <b>{sim_rain_24:.1f} mm</b> daily rainfall event represents an estimated <b>1-in-{est_return_period}-Year Extreme Event</b> for {district_choice}.
+        <div style="background:#161b22; border-left:4px solid #58a6ff; border-radius:8px; padding:12px 16px; margin-bottom:12px; border:1px solid #30363d; border-left:4px solid #58a6ff;">
+            <b style="color:#58a6ff; font-size:14px;">📊 Statistical Return Period:</b><br>
+            <span style="color:#f0f6fc; font-size:13px;">A <b>{sim_rain_24:.1f} mm</b> daily storm represents an estimated <b>1-in-{est_return_period}-Year Extreme Event</b> for {district_choice}.</span>
         </div>
-        <div style="background:#161b22; border-left:4px solid {color}; border-radius:6px; padding:12px;">
-            <b style="color:{color};">🛡️ Action Protocol:</b><br>
-            {rec}
+        <div style="background:#161b22; border-left:4px solid {color}; border-radius:8px; padding:12px 16px; border:1px solid #30363d; border-left:4px solid {color};">
+            <b style="color:{color}; font-size:14px;">🛡️ Action Protocol:</b><br>
+            <span style="color:#f0f6fc; font-size:13px;">{rec}</span>
         </div>
         """, unsafe_allow_html=True)
 
@@ -481,10 +548,16 @@ elif mode == "🧪 Interactive Flood Simulator":
 # TAB 3: STATISTICAL RETURN PERIODS
 # ==========================================
 elif mode == "📊 Statistical Return Periods":
-  st.title("📊 Gumbel Extreme Value Analysis")
-  st.caption(
-      "Block Maxima return period thresholds across Sri Lanka's Wet, Dry, and"
-      " Intermediate Climatic Zones."
+  st.markdown(
+      "<h1 style='color:#ffffff; margin-bottom:2px;'>📊 Gumbel Extreme Value"
+      " Analysis</h1>",
+      unsafe_allow_html=True,
+  )
+  st.markdown(
+      "<p style='color:#94a3b8; font-size:15px; margin-bottom:20px;'>Block"
+      " Maxima return period thresholds across Sri Lanka's Wet, Dry, and"
+      " Intermediate Climatic Zones.</p>",
+      unsafe_allow_html=True,
   )
 
   summary_rows = []
